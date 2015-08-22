@@ -66,6 +66,11 @@ ob.reset!
 ob = Orderbook.new(product_id: "BTC-GBP")
 ```
 
+* Get the "BTC-GBP" orderbook instead of "BTC-USD":
+```ruby
+ob = Orderbook.new(product_id: "BTC-GBP")
+```
+
 * Create a live Orderbook with a callback to fire on each message:
 ```ruby
 ob = Orderbook.new do |message|
