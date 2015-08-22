@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    orderbook (3.0.0)
+    orderbook (4.0.0)
 
 GEM
   remote: https://rubygems.org/

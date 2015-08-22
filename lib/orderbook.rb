@@ -1,7 +1,7 @@
 require 'coinbase/exchange'
 require 'orderbook/book_methods'
 require 'orderbook/book_analysis'
-require 'orderbook/real_time_book'
+require 'orderbook/history'
 require 'orderbook/version'
 require 'eventmachine'
 
@@ -10,6 +10,7 @@ require 'eventmachine'
 class Orderbook
   include BookMethods
   include BookAnalysis
+  include History
 
   # seconds in between pinging the connection.
   #
@@ -69,12 +70,13 @@ class Orderbook
     @product_id = product_id
     @bids = []
     @asks = []
+    @on_message = []
     @snapshot_sequence = 0
     @last_sequence = 0
     @queue = Queue.new
     @websocket = Coinbase::Exchange::Websocket.new(keepalive: true, product_id: @product_id)
     @client = Coinbase::Exchange::Client.new('', '', '', product_id: @product_id)
-    @on_message = block if block_given?
+    @on_message << block if block_given?
     start && start!
   end
 
@@ -109,7 +111,7 @@ class Orderbook
   end
 
   def on_message(&block)
-    @on_message = block
+    @on_message << block
   end
 
   private
@@ -170,7 +172,7 @@ class Orderbook
       loop do
         message = @queue.shift
         apply(message)
-        @on_message.call(message) unless @on_message.nil?
+        @on_message.each { |b| b.call(message) }
       end
     end
   end

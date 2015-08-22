@@ -1,12 +1,12 @@
 class Orderbook
   module History
 
-    attr_reader: candles
+    attr_reader :candles
 
     @candles = {}
 
-    def collect candles
-      start_time = Time.at JSON.parse(@client.server_epoch)
+    def collect_candles
+      start_time = Time.at(JSON.parse(@client.server_epoch).fetch('epoch'))
 
       #
       # Calculate the first minute to start relying on just the websocket for
@@ -15,7 +15,7 @@ class Orderbook
       first_minute = start_time + (60 - start_time)
       @history_queue = Queue.new
 
-      message_callback = lambda do |message|
+      @on_message << message_callback = lambda do |message|
         if message.fetch('type') == 'match'
           if Time.parse(message.fetch('time')) <= first_minute
             @history_queue << message
