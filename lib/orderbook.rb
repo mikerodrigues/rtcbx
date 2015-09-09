@@ -2,8 +2,10 @@ require 'coinbase/exchange'
 require 'orderbook/book_methods'
 require 'orderbook/book_analysis'
 require 'orderbook/history'
+require 'orderbook/history/candle'
 require 'orderbook/version'
 require 'eventmachine'
+require 'timecop'
 
 # This class represents the current state of the CoinBase Exchange orderbook.
 #
@@ -36,29 +38,13 @@ class Orderbook
   #
   attr_reader :last_sequence
 
-  # Coinbase::Exchange::Websocket object
-  #
-  attr_reader :websocket
-
   # Coinbase::Exchange::Client object
   #
   attr_reader :client
 
-  # Thread running the EM loop for the websocket
-  #
-  attr_reader :em_thread
-
-  # Thread running the processing loop
-  #
-  attr_reader :processing_thread
-
   # DateTime of last successful pong
   #
   attr_reader :last_pong
-
-  # Message queue for incoming messages.
-  #
-  attr_reader :queue
 
   # Creates a new live copy of the orderbook.
   #
@@ -172,7 +158,7 @@ class Orderbook
       loop do
         message = @queue.shift
         apply(message)
-        @on_message.each { |b| b.call(message) }
+        @on_message.each { |b| b.call(message) unless b.nil? }
       end
     end
   end
