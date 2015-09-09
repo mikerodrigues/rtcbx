@@ -8,8 +8,9 @@ class Orderbook
     attr_reader :current_minute
     attr_reader :start_minute
 
+    attr_reader :client
 
-    def collect_candles
+    def start!
 ##      Timecop.travel(Time.at(JSON.parse(@client.server_epoch).fetch('epoch')))
 
       #

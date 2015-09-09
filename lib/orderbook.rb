@@ -12,7 +12,6 @@ require 'timecop'
 class Orderbook
   include BookMethods
   include BookAnalysis
-  include History
 
   # seconds in between pinging the connection.
   #
