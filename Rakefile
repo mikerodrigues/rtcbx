@@ -1,11 +1,11 @@
 require 'rake/testtask'
 require 'bundler'
-require_relative './lib/orderbook/version.rb'
+require_relative './lib/rtcbx/version.rb'
 
 task :build do
   begin
     puts 'building gem...'
-    `gem build orderbook.gemspec`
+    `gem build rtcbx.gemspec`
   rescue
     puts 'build failed.'
   end
@@ -14,7 +14,7 @@ end
 task :install do
   begin
     puts 'installing gem...'
-    `gem install --local orderbook`
+    `gem install --local rtcbx`
   rescue
     puts 'install failed.'
   end

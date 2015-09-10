@@ -1,11 +1,5 @@
-require 'coinbase/exchange'
-require 'orderbook/book_methods'
-require 'orderbook/book_analysis'
-require 'orderbook/history'
-require 'orderbook/history/candle'
-require 'orderbook/version'
-require 'eventmachine'
-require 'timecop'
+require 'rtcbx/orderbook/book_methods'
+require 'rtcbx/orderbook/book_analysis'
 
 # This class represents the current state of the CoinBase Exchange orderbook.
 #
@@ -45,17 +39,30 @@ class Orderbook
   #
   attr_reader :last_pong
 
+  # Websocket object
+  #
+  attr_reader :websocket
+
+  # EM loop runs here, puts 'match' messages in the queue to be processed.
+  #
+  attr_reader :websocket_thread
+
+  # Reads from the queue and updates the Orderbook.
+  #
+  attr_reader :update_thread
+
+
   # Creates a new live copy of the orderbook.
   #
   # If +start+ is set to false, the orderbook will not start automatically.
   #
   # If a +block+ is given it is passed each message as it is received.
   #
-  def initialize(product_id: "BTC-USD", start: true, &block)
+  def initialize(product_id: 'BTC-USD', start: true, &block)
     @product_id = product_id
+    @on_message = []
     @bids = []
     @asks = []
-    @on_message = []
     @snapshot_sequence = 0
     @last_sequence = 0
     @queue = Queue.new
@@ -69,22 +76,22 @@ class Orderbook
   # applies them to the current orderbook to create a live book.
   #
   def start!
-    start_em_thread
+    start_websocket_thread
 
     # Wait to make sure the snapshot sequence ID is higher than the sequence of
     # the first message in the queue.
     #
     sleep 0.3
     apply_orderbook_snapshot
-    start_processing_thread
+    start_update_thread
   end
 
-  # Stops the processing thread, EM thread, and the websocket.
+  # Stops the updating thread, EM thread, and the websocket.
   #
   def stop!
-    @processing_thread.kill
-    @em_thread.kill
-    @websocket.stop!
+    update_thread.kill
+    websocket_thread.kill
+    websocket.stop!
   end
 
   # Start and stop the Orderbook. Used to reset Orderbook state with a fresh
@@ -113,24 +120,24 @@ class Orderbook
   # Fetch orderbook snapshot from API and convert order arrays to hashes.
   #
   def apply_orderbook_snapshot
-    @client.orderbook(level: 3) do |resp|
-      @bids = resp['bids'].map { |b| order_to_hash(*b) }
-      @asks = resp['asks'].map { |a| order_to_hash(*a) }
-      @snapshot_sequence = resp['sequence']
-      @last_sequence = resp['sequence']
+    client.orderbook(level: 3) do |resp|
+      bids = resp['bids'].map { |b| order_to_hash(*b) }
+      asks = resp['asks'].map { |a| order_to_hash(*a) }
+      snapshot_sequence = resp['sequence']
+      last_sequence = resp['sequence']
     end
   end
 
   def setup_websocket_callback
-    @websocket.message do |message|
-      @queue.push(message)
+    websocket.message do |message|
+      queue.push(message)
     end
   end
 
   def setup_ping_timer
     EM.add_periodic_timer(PING_INTERVAL) do
-      @websocket.ping do
-        @last_pong = Time.now
+      websocket.ping do
+        last_pong = Time.now
       end
     end
   end
@@ -141,21 +148,21 @@ class Orderbook
     end
   end
 
-  def start_em_thread
-    @em_thread = Thread.new do
+  def start_websocket_thread
+    websocket_thread = Thread.new do
       setup_websocket_callback
       EM.run do
-        @websocket.start!
+        websocket.start!
         setup_ping_timer
         setup_error_handler
       end
     end
   end
 
-  def start_processing_thread
-    @processing_thread = Thread.new do
+  def start_update_thread
+    update_thread = Thread.new do
       loop do
-        message = @queue.shift
+        message = queue.shift
         apply(message)
         @on_message.each { |b| b.call(message) unless b.nil? }
       end

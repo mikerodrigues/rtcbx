@@ -1,10 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'orderbook/version'
+require 'rtcbx/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'orderbook'
+  spec.name          = 'rtcbx'
   spec.version       = Orderbook::VERSION
   spec.authors       = ['Michael Rodrigues']
   spec.email         = ['mikebrodrigues@gmail.com']
@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q(Orderbook uses the Coinbase Exchange Websocket stream
                           to maintain a real-time copy of the order book. Use it
                           in your BTC trading bot.)
-  spec.homepage      = 'https://github.com/mikerodrigues/orderbook'
+  spec.homepage      = 'https://github.com/mikerodrigues/rtcbx'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
