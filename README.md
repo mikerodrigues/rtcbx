@@ -1,26 +1,15 @@
 # Orderbook
 <a href="https://codeclimate.com/github/mikerodrigues/orderbook"><img src="https://codeclimate.com/github/mikerodrigues/orderbook/badges/gpa.svg" /></a>
 
-A gem for creating a realtime order book for the Coinbase Exchange.
-
-Version 4.0.0 switches to keyword arguments, supports other currencies.
-
-Version 3.0.0 has a slightly different interface and properly queues messages
-for an accurate Orderbook.
-
-Version 1.0.0 and greater now use the official Coinbase Exchange Ruby Gem's
-EventMachine-driven client. It should be more reliable than the previous socket
-code.
-
-Also, the gem now uses BigDecimal in place of Float when dealing with sizes and
-prices.
+# Orderbook is being rolled into this project, RTCBX.
+# It will also track candles and trades. (Docs to come)
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'orderbook'
+gem 'rtcbx'
 ```
 
 And then execute:
@@ -29,23 +18,23 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install orderbook
+    $ gem install rtcbx 
 
 ## Usage
 
 ```ruby
-require 'orderbook'
+require 'rtcbx'
 ```
 
 * Create a live updating Orderbook:
 ```ruby
-ob = Orderbook.new
+ob = RTCBX::Orderbook.new
 ```
 
 * Create an Orderbook object but don't fetch an orderbook or start live
   updating.
 ```ruby
-ob = Orderbook.new(start: false)
+ob = RTCBX::Orderbook.new(start: false)
 
 # When you want it to go live:
 
@@ -63,17 +52,17 @@ ob.reset!
 
 * Get the "BTC-GBP" orderbook instead of "BTC-USD":
 ```ruby
-ob = Orderbook.new(product_id: "BTC-GBP")
+ob = RTCBX::Orderbook.new(product_id: "BTC-GBP")
 ```
 
 * Get the "BTC-GBP" orderbook instead of "BTC-USD":
 ```ruby
-ob = Orderbook.new(product_id: "BTC-GBP")
+ob = RTCBX::Orderbook.new(product_id: "BTC-GBP")
 ```
 
 * Create a live Orderbook with a callback to fire on each message:
 ```ruby
-ob = Orderbook.new do |message|
+ob = RTCBX::Orderbook.new do |message|
   if message.fetch 'type' == 'match'
     puts ob.spread.to_f('s')
   end
