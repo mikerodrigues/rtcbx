@@ -1,5 +1,5 @@
-class Orderbook
-  module History
+class RTCBX 
+  class Candles < RTCBX
     class Candle
 
       attr_reader :time, :low, :high, :open, :close, :volume

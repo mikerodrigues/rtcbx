@@ -11,7 +11,7 @@ GIT
 PATH
   remote: .
   specs:
-    orderbook (4.0.0)
+    rtcbx (4.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -54,7 +54,7 @@ DEPENDENCIES
   coinbase-exchange!
   eventmachine
   json
-  orderbook!
   pry
   rake (~> 10.0)
+  rtcbx!
   timecop

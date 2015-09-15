@@ -5,7 +5,7 @@ require 'rtcbx/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'rtcbx'
-  spec.version       = Orderbook::VERSION
+  spec.version       = RTCBX::VERSION
   spec.authors       = ['Michael Rodrigues']
   spec.email         = ['mikebrodrigues@gmail.com']
   spec.summary       = %q(Maintains an real-time copy of the Coinbase Exchange order book.)
