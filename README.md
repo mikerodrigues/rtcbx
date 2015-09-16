@@ -1,7 +1,16 @@
 # RTCBX 
 
-# Orderbook is being rolled into this project, RTCBX.
-# It will also track candles and trades. (Docs to come)
+RTCBX uses the Coinbase Exchange websocket feed to provide immediate access to
+the current state of the exchange without repeatedly polling parts of the
+RESTful API. It can:
+* Keep a synchronized copy of the entire orderbook - `RTCBX::Orderbook`
+* Calculate historic rates (candles) by the minute - `RTCBX::Candles`
+* Place and track orders for an account - `RTCBX::Trader`
+
+Each type of RTCBX object will supports defining callbacks to run when:
+* The `Orderbook` changes.
+* A new candle is generated.
+* Your order(s) change status.
 
 ## Installation
 
@@ -24,6 +33,30 @@ Or install it yourself as:
 ```ruby
 require 'rtcbx'
 ```
+RTCBX objects share a common interface:
+```ruby
+#
+# :product_id
+#   sets the currency (defaults to 'BTC-USD)
+#
+# :start
+#   run #start! at creation?  (defaults to true)
+# 
+
+rtcbx = RTCBX.new({:product_id = 'BTC-GPB', start: false}) do |change|
+  # check some values, do some stuff
+end
+
+rtcbx.start! # Starts the websocket feed and tracking/update threads.
+
+rtcbx.stop!  # Stops the websocket feed and any tracking/update threads.
+
+rtcbx.reset! # Calls #stop! then calls #start!.
+
+```
+
+
+
 
 * Create a live updating Orderbook:
 ```ruby
