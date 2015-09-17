@@ -14,10 +14,12 @@ class RTCBX
 
     attr_reader :initial_time
     attr_reader :first_bucket
+    attr_reader :bucket_lock
 
 
     def initialize(options = {}, &block)
       super(options, &block)
+      @buckets_lock = Mutex.new
     end
 
     def start!
@@ -36,23 +38,6 @@ class RTCBX
 
     private
 
-
-#    def start_update_thread
-#      @update_thread = Thread.new do
-#        loop do
-#          event = queue.pop
-#          if event.fetch('type') == 'match'
-#            #
-#            #this is a stupid check
-#            #
-#            if Time.parse(event.fetch('time')) >= Time.at(first_bucket)
-#              @history_queue << event
-#            end
-#          end
-#        end
-#      end
-#    end
-
     def start_bucket_thread
       @bucket_thread = Thread.new do
         @buckets = {}
@@ -65,12 +50,14 @@ class RTCBX
             if Time.parse(message.fetch('time')) >= Time.at(first_bucket)
               timestamp = Time.parse(message.fetch('time'))
               bucket = timestamp.to_i - timestamp.sec
-              if bucket > current_bucket
-                @current_bucket = bucket 
-                @buckets[current_bucket.to_i] = []
-                @buckets[current_bucket.to_i] << message
-              else
-                @buckets[current_bucket.to_i] << message
+              @buckets_lock.synchronize do
+                if bucket > current_bucket
+                  @current_bucket = bucket
+                  @buckets[current_bucket.to_i] = []
+                  @buckets[current_bucket.to_i] << message
+                else
+                  @buckets[current_bucket.to_i] << message
+                end
               end
             end
           end
@@ -85,12 +72,16 @@ class RTCBX
         loop do
           buckets.keys.each do |key|
             if key + 60 <= Time.now.to_i
-              @candles << Candle.new(key, buckets[key]) unless buckets[key].empty?
-              buckets.delete(key)
+              @buckets_lock.synchronize do
+                @candles << Candle.new(key, buckets[key]) unless buckets[key].empty?
+                # Run candle callback
+                #
+                buckets.delete(key)
+              end
             end
           end
 
-          sleep 60
+          sleep(60 - Time.now.sec)
         end
       end
     end
