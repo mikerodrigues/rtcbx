@@ -73,9 +73,11 @@ class RTCBX
           buckets.keys.each do |key|
             if key + 60 <= Time.now.to_i
               @buckets_lock.synchronize do
-                @candles << Candle.new(key, buckets[key]) unless buckets[key].empty?
+                candle =  Candle.new(key, buckets[key]) unless buckets[key].empty?
+                @candles << candle
                 # Run candle callback
                 #
+                @message_callbacks.each{|c| c.call(candle)}
                 buckets.delete(key)
               end
             end
