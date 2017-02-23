@@ -1,6 +1,6 @@
 # RTCBX 
 
-RTCBX uses the Coinbase Exchange websocket feed to provide immediate access to
+RTCBX uses the Coinbase (now GDAX) Exchange websocket feed to provide immediate access to
 the current state of the exchange without repeatedly polling parts of the
 RESTful API. It can:
 * Keep a synchronized copy of the entire orderbook - `RTCBX::Orderbook`
