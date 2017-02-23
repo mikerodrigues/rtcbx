@@ -43,7 +43,7 @@ RTCBX objects share a common interface:
 #   run #start! at creation?  (defaults to true)
 # 
 
-rtcbx = RTCBX.new({:product_id = 'BTC-GPB', start: false}) do |change|
+rtcbx = RTCBX.new({product_id: 'BTC-GPB', start: false}) do |change|
   # check some values, do some stuff
 end
 
