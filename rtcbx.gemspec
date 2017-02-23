@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = RTCBX::VERSION
   spec.authors       = ['Michael Rodrigues']
   spec.email         = ['mikebrodrigues@gmail.com']
-  spec.summary       = %q(Maintains an real-time copy of the Coinbase Exchange order book.)
-  spec.description   = %q(Orderbook uses the Coinbase Exchange Websocket stream
+  spec.summary       = %q(Maintains an real-time copy of the GDAX (Coinbase) Exchange order book.)
+  spec.description   = %q(Orderbook uses the GDAX (Coinbase) Exchange Websocket stream
                           to maintain a real-time copy of the order book. Use it
                           in your BTC trading bot.)
   spec.homepage      = 'https://github.com/mikerodrigues/rtcbx'
