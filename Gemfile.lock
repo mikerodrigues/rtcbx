@@ -1,9 +1,9 @@
 GIT
-  remote: https://github.com/mikerodrigues/coinbase-exchange-ruby.git
-  revision: 79cce083bebfd90cf27db0b942bcb13f1a1e0e6d
-  branch: orderbook
+  remote: https://github.com/coinbase/coinbase-exchange-ruby.git
+  revision: 2c4b3f91346aeb82c53ae2741834a9f3aa78b676
+  branch: master
   specs:
-    coinbase-exchange (0.1.2)
+    coinbase-exchange (0.2.0)
       bigdecimal
       em-http-request
       faye-websocket
@@ -16,32 +16,34 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.3.8)
-    bigdecimal (1.2.7)
-    coderay (1.1.0)
-    cookiejar (0.3.2)
-    em-http-request (1.1.2)
+    addressable (2.5.0)
+      public_suffix (~> 2.0, >= 2.0.2)
+    bigdecimal (1.3.1)
+    coderay (1.1.1)
+    cookiejar (0.3.3)
+    em-http-request (1.1.5)
       addressable (>= 2.3.4)
-      cookiejar
+      cookiejar (!= 0.3.1)
       em-socksify (>= 0.3)
       eventmachine (>= 1.0.3)
       http_parser.rb (>= 0.6.0)
-    em-socksify (0.3.0)
+    em-socksify (0.3.1)
       eventmachine (>= 1.0.0.beta.4)
-    eventmachine (1.0.8)
-    faye-websocket (0.10.0)
+    eventmachine (1.2.3)
+    faye-websocket (0.10.7)
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.5.1)
     http_parser.rb (0.6.0)
-    json (1.8.3)
+    json (2.0.3)
     method_source (0.8.2)
-    pry (0.10.1)
+    pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rake (10.4.2)
+    public_suffix (2.0.5)
+    rake (10.5.0)
     slop (3.6.0)
-    websocket-driver (0.6.2)
+    websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
 
@@ -56,3 +58,6 @@ DEPENDENCIES
   pry
   rake (~> 10.0)
   rtcbx!
+
+BUNDLED WITH
+   1.10.6
