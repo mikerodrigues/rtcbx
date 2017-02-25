@@ -13,9 +13,6 @@ class RTCBX
   attr_reader :product_id
   attr_reader :start
   attr_reader :api_key
-  attr_reader :api_secret
-  attr_reader :api_passphrase
-
   attr_reader :message_callbacks
   attr_reader :websocket
   attr_reader :client
@@ -60,6 +57,9 @@ class RTCBX
   end
 
   private
+
+  attr_reader :api_secret
+  attr_reader :api_passphrase
 
   def setup_websocket_callback
     websocket.message do |message|
