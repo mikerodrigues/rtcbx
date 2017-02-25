@@ -30,7 +30,7 @@ class RTCBX
     @api_secret     = options.fetch(:api_secret, '')
     @api_passphrase = options.fetch(:api_passphrase, '')
     @message_callbacks = []
-    @message_callbacks << block
+    @message_callbacks << block if block_given?
     @client = Coinbase::Exchange::Client.new(
       api_key,
       api_secret,

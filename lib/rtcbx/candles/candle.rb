@@ -5,7 +5,7 @@ class RTCBX
       attr_reader :time, :low, :high, :open, :close, :volume
 
       def initialize(epoch, matches)
-        @time = epoch
+        @time = Time.at(epoch)
         @low = matches.map {|message| BigDecimal.new(message.fetch('price'))}.min
         @high = matches.map {|message| BigDecimal.new(message.fetch('price'))}.max
         @open = BigDecimal.new(matches.first.fetch('price'))
