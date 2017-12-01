@@ -49,10 +49,10 @@ class RTCBX
           if message.fetch('type') == 'match'
             if Time.parse(message.fetch('time')) >= Time.at(first_bucket)
               timestamp = Time.parse(message.fetch('time'))
-              bucket = timestamp.to_i - timestamp.sec
+              message_bucket = timestamp.to_i - timestamp.sec
               @buckets_lock.synchronize do
-                if bucket > current_bucket
-                  @current_bucket = bucket
+                if message_bucket >= current_bucket
+                  @current_bucket = message_bucket
                   @buckets[current_bucket.to_i] = []
                   @buckets[current_bucket.to_i] << message
                 else
