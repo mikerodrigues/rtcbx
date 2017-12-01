@@ -82,7 +82,7 @@ class RTCBX
   def setup_ping_timer
     EM.add_periodic_timer(PING_INTERVAL) do
       websocket.ping do
-        last_pong = Time.now
+        @last_pong = Time.now
       end
     end
   end
