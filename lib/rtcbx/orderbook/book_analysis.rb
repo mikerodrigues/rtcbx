@@ -58,9 +58,51 @@ class RTCBX
         best_ask.fetch(:price) - best_bid.fetch(:price)
       end
 
+      def aggregate_bids(top_n = nil)
+        aggregate = {}
+        @bids.each do |bid|
+          aggregate[bid[:price]] ||= aggregate_base
+          aggregate[bid[:price]][:size] += bid[:size]
+          aggregate[bid[:price]][:num_orders] += 1
+        end
+        top_n ||= aggregate.keys.count
+        aggregate.keys.sort.reverse.first(top_n).map do |price|
+          { price: price,
+            size: aggregate[price][:size],
+            num_orders: aggregate[price][:num_orders]
+          }
+        end
+      end
+
+      def aggregate_asks(top_n = nil)
+        aggregate = {}
+        @asks.each do |ask|
+          aggregate[ask[:price]] ||= aggregate_base
+          aggregate[ask[:price]][:size] += ask[:size]
+          aggregate[ask[:price]][:num_orders] += 1
+        end
+        top_n ||= aggregate.keys.count
+        aggregate.keys.sort.first(top_n).map do |price|
+          { price: price,
+            size: aggregate[price][:size],
+            num_orders: aggregate[price][:num_orders]
+          }
+        end
+      end
+
+      def aggregate(top_n = nil)
+        { bids: aggregate_bids(top_n), asks: aggregate_asks(top_n) }
+      end
+
       def summarize
         print "# of asks: #{ask_count}\n# of bids: #{bid_count}\nAsk volume: #{ask_volume.to_s('F')}\nBid volume: #{bid_volume.to_s('F')}\n"
         $stdout.flush
+      end
+
+      private
+
+      def aggregate_base
+        { size: BigDecimal.new(0), num_orders: 0 }
       end
     end
   end

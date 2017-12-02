@@ -129,6 +129,22 @@ ob.last_sequence
 ob.last_pong
 ```
 
+* Aggregates the top N bids in the Orderbook (optional parameter defaults to aggregate all available bids):
+```ruby
+ob.aggregate_bids(10)
+```
+
+* Aggregates the first N asks in the Orderbook (optional parameter defaults to aggregate all available asks):
+```ruby
+ob.aggregate_asks(10)
+```
+
+* Aggregates the top N bids and the first N asks in the Orderbook (optional parameter defaults to aggregate the entire Orderbook):
+```ruby
+# Will perform the aggregation on each call. Avoid abusing this function since it may degrade performance.
+ob.aggregate(10)
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/mikerodrigues/orderbook/fork )
