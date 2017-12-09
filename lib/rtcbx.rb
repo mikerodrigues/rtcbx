@@ -10,16 +10,50 @@ class RTCBX
   #
   PING_INTERVAL = 15
 
+  # The GDAX product being tracked (eg. "BTC-USD")
   attr_reader :product_id
+
+  # Boolean, whether the orderbook goes live on creation or not
+  # If +false+, +#start!+ must be called to initiate tracking.
   attr_reader :start
+
+  # API key used to authenticate to the API
+  # Not required for Orderbook or Candles
   attr_reader :api_key
+
+  # An array of blocks to be run each time a message comes in on the Websocket
   attr_reader :message_callbacks
+
+  # The Websocket object
   attr_reader :websocket
+
+  # The GDAX Client object
+  # You can use this if you need to make API calls
   attr_reader :client
+
+  # The message queue from the Websocket.
+  # The +websocket_thread+ processes this queue
   attr_reader :queue
+
+  # Epoch time indicating the last time we received a pong from GDAX in response
+  # to one of our pings
   attr_reader :last_pong
+
+  # The thread that consumes the websocket data
   attr_reader :websocket_thread
 
+  # Create a new RTCBX object with options and an optional block to be run when
+  # each message is called.
+  #
+  # Generally you won't call this directly. You'll use +RTCBX::Orderbook.new+,
+  # +RTCBX::Trader.new+, or +RTCBX::Candles.new+.
+  #
+  # You can also subclass RTCBX and call this method through +super+, as the
+  # classes mentioned above do.
+  #
+  # RTCBX handles connecting to the Websocket, setting up the client, and
+  # managing the thread that consumes the Websocket feed.
+  #
   def initialize(options = {}, &block)
     @product_id     = options.fetch(:product_id, 'BTC-USD')
     @start          = options.fetch(:start, true)
@@ -42,15 +76,18 @@ class RTCBX
     start! if start
   end
 
+  # Starts the thread to consume the Websocket feed
   def start!
     start_websocket_thread
   end
 
+  # Stops the thread and disconnects from the Websocket
   def stop!
     websocket_thread.kill
     websocket.stop!
   end
 
+  # Stops, then starts the thread that consumes the Websocket feed
   def reset!
     stop!
     start!
@@ -61,6 +98,8 @@ class RTCBX
   attr_reader :api_secret
   attr_reader :api_passphrase
 
+  # Configures the websocket to pass each message to each of the defined message
+  # callbacks
   def setup_websocket_callback
     websocket.message do |message|
       queue.push(message)
@@ -68,6 +107,7 @@ class RTCBX
     end
   end
 
+  # Starts the thread that consumes the websocket
   def start_websocket_thread
     @websocket_thread = Thread.new do
       setup_websocket_callback
@@ -79,6 +119,7 @@ class RTCBX
     end
   end
 
+  # Configures the websocket to periodically ping GDAX and confirm connection
   def setup_ping_timer
     EM.add_periodic_timer(PING_INTERVAL) do
       websocket.ping do
@@ -87,6 +128,7 @@ class RTCBX
     end
   end
 
+  # Configures the Websocket object to print any errors to the console
   def setup_error_handler
     EM.error_handler do |e|
       print "Websocket Error: #{e.message} - #{e.backtrace.join("\n")}"

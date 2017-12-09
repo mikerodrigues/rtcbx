@@ -52,6 +52,8 @@ class RTCBX
       start_update_thread
     end
 
+    # Stop the thread that listens to updates on the websocket
+    #
     def stop!
       super
       update_thread.kill
@@ -79,6 +81,8 @@ class RTCBX
       end
     end
 
+    # Private method to actually start the thread that reads from the que and
+    # updates the Orderbook state
     def start_update_thread
       @update_thread = Thread.new do
         begin
@@ -92,7 +96,5 @@ class RTCBX
         end
       end
     end
-
-    #    apply(message)
   end
 end

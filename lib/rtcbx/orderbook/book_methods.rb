@@ -6,6 +6,8 @@ class RTCBX
     # as they are received by the websocket.
     #
     module BookMethods
+
+      # Names of attributes that should be converted to +BigDecimal+
       BIGDECIMAL_KEYS = %w(size old_size new_size remaining_size price)
 
       # Applies a message to an Orderbook object by making relevant changes to

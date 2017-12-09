@@ -3,25 +3,51 @@ require 'rtcbx/candles/candle'
 class RTCBX
   class Candles < RTCBX
 
+    # A hash of buckets
+    # Each key is an epoch which stores every +match+ message for that minute
+    # (The epoch plus 60 seconds)
+    # Each minute interval is a bucket, which is used to calculate that minute's
+    # +Candle+
     attr_reader :buckets
-    attr_reader :history_queue
-    attr_reader :update_thread
+
+
+    # This thread monitors the websocket object and puts each +match+ object
+    # into the proper bucket. This thread maintains the +buckets+ object.
     attr_reader :bucket_thread
+
+    # The +candle_thread+ consumes the buckets created by the +bucket_thread+ in
+    # +buckets+ and turns them into +Candle+ objects. These are then appended to
+    # the +candles+ array. This functionality could be improved. Ideally you're
+    # consuming this array into a database to keep history in realtime.
     attr_reader :candle_thread
+
+    # The epoch representing the current bucket
     attr_reader :current_bucket
-    attr_reader :start_minute
+
+    # An array of generated candles. You should process these by putting them
+    # into a database and removing them from the array. If you want to help me
+    # abstract this to a pluggable database system, open an issue.
     attr_reader :candles
 
+    # The first full minute that we can collect for. (+Time+ object)
     attr_reader :initial_time
+
+    # The epoch of the first bucket
     attr_reader :first_bucket
-    attr_reader :bucket_lock
+
+    # Mutex to allow our two threads to produce and consume +buckets+
+    attr_reader :buckets_lock
 
 
+    # Create a new +Candles+ object to start and track candles
+    # Pass a block to run a block whenever a candle is created.
+    #
     def initialize(options = {}, &block)
       super(options, &block)
       @buckets_lock = Mutex.new
     end
 
+    # Start tracking candles
     def start!
       super
       #
@@ -30,7 +56,6 @@ class RTCBX
       #
       @initial_time = Time.now
       @first_bucket = initial_time.to_i + (60 - initial_time.sec)
-      @history_queue = Queue.new
 
       start_bucket_thread
       start_candle_thread
@@ -38,6 +63,7 @@ class RTCBX
 
     private
 
+    # Start the thread to create buckets
     def start_bucket_thread
       @bucket_thread = Thread.new do
         @buckets = {}
@@ -65,6 +91,7 @@ class RTCBX
       end
     end
 
+    # Start the thread to consume buckets to +Candle+ objects
     def start_candle_thread
       @candle_thread = Thread.new do
         @candles = []
