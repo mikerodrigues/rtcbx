@@ -73,6 +73,14 @@ class RTCBX
       def received(_)
         # The book doesn't change for this message type.
       end
+
+      def margin_profile_update(_)
+        # The book doesn't change for this message type.
+      end
+
+      def activate(_)
+        # The book doesn't change for this message type.
+      end
     end
   end
 end

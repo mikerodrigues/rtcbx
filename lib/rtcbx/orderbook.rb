@@ -47,7 +47,7 @@ class RTCBX
     #
     def start!
       super
-      sleep 0.3
+      sleep 1
       apply_orderbook_snapshot
       start_update_thread
     end

@@ -8,7 +8,7 @@ require 'eventmachine'
 class RTCBX
   # seconds in between pinging the connection.
   #
-  PING_INTERVAL = 15
+  PING_INTERVAL = 2
 
   # The GDAX product being tracked (eg. "BTC-USD")
   attr_reader :product_id
