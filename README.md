@@ -1,5 +1,5 @@
 # RTCBX 
-
+[![Gem Version](https://badge.fury.io/rb/rtcbx.svg)](https://badge.fury.io/rb/rtcbx)
 RTCBX uses the Coinbase (now GDAX) Exchange websocket feed to provide immediate access to
 the current state of the exchange without repeatedly polling parts of the
 RESTful API. It can:
