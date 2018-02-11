@@ -38,7 +38,7 @@ RTCBX objects share a common interface:
 ```ruby
 #
 # :product_id
-#   sets the currency (defaults to 'BTC-USD)
+#   sets the currency (defaults to 'BTC-USD')
 #
 # :start
 #   run #start! at creation?  (defaults to true)
@@ -58,7 +58,7 @@ rtcbx.reset! # Calls #stop! then calls #start!.
 
 
 
-
+### Orderbooks
 * Create a live updating Orderbook:
 ```ruby
 ob = RTCBX::Orderbook.new
@@ -145,6 +145,8 @@ ob.aggregate_asks(10)
 # Will perform the aggregation on each call. Avoid abusing this function since it may degrade performance.
 ob.aggregate(10)
 ```
+### Candles
+### Trader
 
 ## Contributing
 
