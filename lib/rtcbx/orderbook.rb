@@ -81,7 +81,7 @@ class RTCBX
       end
     end
 
-    # Private method to actually start the thread that reads from the que and
+    # Private method to actually start the thread that reads from the queue and
     # updates the Orderbook state
     def start_update_thread
       @update_thread = Thread.new do
