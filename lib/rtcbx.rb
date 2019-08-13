@@ -10,7 +10,7 @@ class RTCBX
   #
   PING_INTERVAL = 2
 
-  # The GDAX product being tracked (eg. "BTC-USD")
+  # The Coinbase Pro product being tracked (eg. "BTC-USD")
   attr_reader :product_id
 
   # Boolean, whether the orderbook goes live on creation or not
@@ -27,7 +27,7 @@ class RTCBX
   # The Websocket object
   attr_reader :websocket
 
-  # The GDAX Client object
+  # The Coinbase Pro Client object
   # You can use this if you need to make API calls
   attr_reader :client
 
@@ -35,7 +35,7 @@ class RTCBX
   # The +websocket_thread+ processes this queue
   attr_reader :queue
 
-  # Epoch time indicating the last time we received a pong from GDAX in response
+  # Epoch time indicating the last time we received a pong from Coinbase Pro in response
   # to one of our pings
   attr_reader :last_pong
 
@@ -119,7 +119,7 @@ class RTCBX
     end
   end
 
-  # Configures the websocket to periodically ping GDAX and confirm connection
+  # Configures the websocket to periodically ping Coinbase Pro and confirm connection
   def setup_ping_timer
     EM.add_periodic_timer(PING_INTERVAL) do
       websocket.ping do

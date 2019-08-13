@@ -72,7 +72,7 @@ class RTCBX
       end
 
       # Aggregates the +top_n+ current bids. Pass `50` and you'll get the same
-      # thing tht GDAX calls a "Level 2 Orderbook"
+      # thing tht Coinbase Pro calls a "Level 2 Orderbook"
       def aggregate_bids(top_n = nil)
         aggregate = {}
         @bids.each do |bid|
@@ -90,7 +90,7 @@ class RTCBX
       end
 
       # Aggregates the +top_n+ current asks. Pass `50` and you'll get the same
-      # thing tht GDAX calls a "Level 2 Orderbook"
+      # thing tht Coinbase Pro calls a "Level 2 Orderbook"
       def aggregate_asks(top_n = nil)
         aggregate = {}
         @asks.each do |ask|
@@ -108,7 +108,7 @@ class RTCBX
       end
 
       # Aggregates the +top_n+ current asks and bids. Pass `50` and you'll get the same
-      # thing tht GDAX calls a "Level 2 Orderbook"
+      # thing tht Coinbase Pro calls a "Level 2 Orderbook"
       def aggregate(top_n = nil)
         { bids: aggregate_bids(top_n), asks: aggregate_asks(top_n) }
       end
