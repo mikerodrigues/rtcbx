@@ -1,7 +1,8 @@
-class RTCBX 
+# frozen_string_literal: true
+
+class RTCBX
   class Candles < RTCBX
     class Candle
-
       # Candle values, this is standard
       attr_reader :time, :low, :high, :open, :close, :volume
 
@@ -9,22 +10,22 @@ class RTCBX
       # the interval of the candle
       def initialize(epoch, matches)
         @time = Time.at(epoch)
-        @low = matches.map {|message| BigDecimal.new(message.fetch('price'))}.min
-        @high = matches.map {|message| BigDecimal.new(message.fetch('price'))}.max
-        @open = BigDecimal.new(matches.first.fetch('price'))
-        @close = BigDecimal.new(matches.last.fetch('price'))
-        @volume = matches.reduce(BigDecimal(0)) {|sum, message| sum + BigDecimal.new(message.fetch('size'))}
+        @low = matches.map { |message| BigDecimal(message.fetch('price')) }.min
+        @high = matches.map { |message| BigDecimal(message.fetch('price')) }.max
+        @open = BigDecimal(matches.first.fetch('price'))
+        @close = BigDecimal(matches.last.fetch('price'))
+        @volume = matches.reduce(BigDecimal(0)) { |sum, message| sum + BigDecimal(message.fetch('size')) }
       end
 
       # Return a +Hash+ representation of the +Candle+
       def to_h
         {
-          start:  Time.at(@time),
-          low:    @low.to_s("F"),
-          high:   @high.to_s("F"),
-          open:   @open.to_s("F"),
-          close:  @close.to_s("F"),
-          volume: @volume.to_s("F"),
+          start: Time.at(@time),
+          low: @low.to_s('F'),
+          high: @high.to_s('F'),
+          open: @open.to_s('F'),
+          close: @close.to_s('F'),
+          volume: @volume.to_s('F')
         }
       end
     end

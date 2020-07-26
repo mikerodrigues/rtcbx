@@ -1,15 +1,15 @@
+# frozen_string_literal: true
+
 require 'rtcbx/candles/candle'
 
 class RTCBX
   class Candles < RTCBX
-
     # A hash of buckets
     # Each key is an epoch which stores every +match+ message for that minute
     # (The epoch plus 60 seconds)
     # Each minute interval is a bucket, which is used to calculate that minute's
     # +Candle+
     attr_reader :buckets
-
 
     # This thread monitors the websocket object and puts each +match+ object
     # into the proper bucket. This thread maintains the +buckets+ object.
@@ -37,7 +37,6 @@ class RTCBX
 
     # Mutex to allow our two threads to produce and consume +buckets+
     attr_reader :buckets_lock
-
 
     # Create a new +Candles+ object to start and track candles
     # Pass a block to run a block whenever a candle is created.
@@ -72,19 +71,19 @@ class RTCBX
 
         loop do
           message = queue.pop
-          if message.fetch('type') == 'match'
-            if Time.parse(message.fetch('time')) >= Time.at(first_bucket)
-              timestamp = Time.parse(message.fetch('time'))
-              message_bucket = timestamp.to_i - timestamp.sec
-              @buckets_lock.synchronize do
-                if message_bucket >= current_bucket
-                  @current_bucket = message_bucket
-                  @buckets[current_bucket.to_i] = []
-                  @buckets[current_bucket.to_i] << message
-                else
-                  @buckets[current_bucket.to_i] << message
-                end
-              end
+          next unless message.fetch('type') == 'match'
+
+          next unless Time.parse(message.fetch('time')) >= Time.at(first_bucket)
+
+          timestamp = Time.parse(message.fetch('time'))
+          message_bucket = timestamp.to_i - timestamp.sec
+          @buckets_lock.synchronize do
+            if message_bucket >= current_bucket
+              @current_bucket = message_bucket
+              @buckets[current_bucket.to_i] = []
+              @buckets[current_bucket.to_i] << message
+            else
+              @buckets[current_bucket.to_i] << message
             end
           end
         end
@@ -98,15 +97,15 @@ class RTCBX
         sleep(60 - Time.now.sec)
         loop do
           buckets.keys.each do |key|
-            if key + 60 <= Time.now.to_i
-              @buckets_lock.synchronize do
-                candle =  Candle.new(key, buckets[key]) unless buckets[key].empty?
-                @candles << candle
-                # Run candle callback
-                #
-                @message_callbacks.each{|c| c.call(candle)}
-                buckets.delete(key)
-              end
+            next unless key + 60 <= Time.now.to_i
+
+            @buckets_lock.synchronize do
+              candle = Candle.new(key, buckets[key]) unless buckets[key].empty?
+              @candles << candle
+              # Run candle callback
+              #
+              @message_callbacks.each { |c| c.call(candle) }
+              buckets.delete(key)
             end
           end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'coinbase/exchange'
 require 'rtcbx/orderbook'
 require 'rtcbx/candles'
@@ -103,7 +105,7 @@ class RTCBX
   def setup_websocket_callback
     websocket.message do |message|
       queue.push(message)
-      message_callbacks.each { |b| b.call(message) unless b.nil? }
+      message_callbacks.each { |b| b&.call(message) }
     end
   end
 

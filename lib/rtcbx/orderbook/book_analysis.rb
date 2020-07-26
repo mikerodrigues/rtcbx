@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RTCBX
   class Orderbook < RTCBX
     # Simple collection of commands to get info about the orderbook. Add our own
@@ -53,12 +55,12 @@ class RTCBX
 
       # The price of the best current bid
       def best_bid
-        @bids.sort_by { |x| x.fetch(:price) }.last
+        @bids.max_by { |x| x.fetch(:price) }
       end
 
       # The price of the best current ask
       def best_ask
-        @asks.sort_by { |x| x.fetch(:price) }.first
+        @asks.min_by { |x| x.fetch(:price) }
       end
 
       # The prices of the best current bid and ask
@@ -84,8 +86,7 @@ class RTCBX
         aggregate.keys.sort.reverse.first(top_n).map do |price|
           { price: price,
             size: aggregate[price][:size],
-            num_orders: aggregate[price][:num_orders]
-          }
+            num_orders: aggregate[price][:num_orders] }
         end
       end
 
@@ -102,8 +103,7 @@ class RTCBX
         aggregate.keys.sort.first(top_n).map do |price|
           { price: price,
             size: aggregate[price][:size],
-            num_orders: aggregate[price][:num_orders]
-          }
+            num_orders: aggregate[price][:num_orders] }
         end
       end
 
@@ -122,7 +122,7 @@ class RTCBX
       private
 
       def aggregate_base
-        { size: BigDecimal.new(0), num_orders: 0 }
+        { size: BigDecimal(0), num_orders: 0 }
       end
     end
   end

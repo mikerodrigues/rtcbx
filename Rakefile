@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rake/testtask'
 require 'bundler'
 require_relative './lib/rtcbx/version.rb'
@@ -6,7 +8,7 @@ task :build do
   begin
     puts 'building gem...'
     `gem build rtcbx.gemspec`
-  rescue
+  rescue StandardError
     puts 'build failed.'
   end
 end
@@ -15,7 +17,7 @@ task :install do
   begin
     puts 'installing gem...'
     `gem install --local rtcbx`
-  rescue
+  rescue StandardError
     puts 'install failed.'
   end
 end
@@ -27,7 +29,7 @@ task :console do
   PRY.start
 end
 
-task default: %w(build install)
+task default: %w[build install]
 
 Rake::TestTask.new do |t|
   t.libs << 'test'

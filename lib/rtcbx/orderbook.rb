@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rtcbx/orderbook/book_methods'
 require 'rtcbx/orderbook/book_analysis'
 
@@ -34,7 +36,7 @@ class RTCBX
     #
     # If a +block+ is given it is passed each message as it is received.
     #
-    def initialize(options={}, &block)
+    def initialize(options = {}, &block)
       @bids = []
       @asks = []
       @snapshot_sequence = 0
@@ -64,10 +66,9 @@ class RTCBX
     # Converts an order array from the API into a hash.
     #
     def order_to_hash(price, size, order_id)
-      { price:    BigDecimal.new(price),
-        size:     BigDecimal.new(size),
-        order_id: order_id
-      }
+      { price: BigDecimal(price),
+        size: BigDecimal(size),
+        order_id: order_id }
     end
 
     # Fetch orderbook snapshot from API and convert order arrays to hashes.
@@ -90,8 +91,7 @@ class RTCBX
             message = queue.pop
             apply(message)
           end
-
-        rescue => e
+        rescue StandardError => e
           puts e
         end
       end

@@ -1,28 +1,29 @@
+# frozen_string_literal: true
+
 require 'bigdecimal'
 class RTCBX
   class Orderbook < RTCBX
-
     # This class provides methods to apply updates to the state of the orderbook
     # as they are received by the websocket.
     #
     module BookMethods
-
       # Names of attributes that should be converted to +BigDecimal+
-      BIGDECIMAL_KEYS = %w(size old_size new_size remaining_size price)
+      BIGDECIMAL_KEYS = %w[size old_size new_size remaining_size price].freeze
 
       # Applies a message to an Orderbook object by making relevant changes to
       # @bids, @asks, and @last_sequence.
       #
       def apply(msg)
         return if msg.fetch('sequence') != @last_sequence + 1
-        #if msg.fetch('sequence') != @last_sequence + 1
+
+        # if msg.fetch('sequence') != @last_sequence + 1
         #  puts "Expected #{@last_sequence + 1}, got #{msg.fetch('sequence')}"
         #  @websocket.stop!
-        #end
+        # end
 
         @last_sequence = msg.fetch('sequence')
         BIGDECIMAL_KEYS.each do |key|
-          msg[key] = BigDecimal.new(msg.fetch(key)) if msg.fetch(key, false)
+          msg[key] = BigDecimal(msg.fetch(key)) if msg.fetch(key, false)
         end
 
         __send__(msg.fetch('type'), msg)
@@ -32,8 +33,8 @@ class RTCBX
 
       def open(msg)
         order = {
-          price:    msg.fetch('price'),
-          size:     msg.fetch('remaining_size'),
+          price: msg.fetch('price'),
+          size: msg.fetch('remaining_size'),
           order_id: msg.fetch('order_id')
         }
 
